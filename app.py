@@ -67,45 +67,41 @@ with tab2:
 with tab3:
     st.subheader("ESG vs Financial Relationships")
 
-
     esg_cols = [c for c in df.columns if "ESG" in c.upper()]
     numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
 
-
     if len(esg_cols) == 0:
-    st.warning("No ESG columns found in the dataset.")
+        st.warning("No ESG columns found in the dataset.")
     else:
-    col1, col2 = st.columns(2)
+        col1, col2 = st.columns(2)
 
+        with col1:
+            selected_esg = st.selectbox(
+                "Select ESG Metric",
+                esg_cols
+            )
 
-    with col1:
-    selected_esg = st.selectbox(
-    "Select ESG Metric",
-    esg_cols
-    )
+        with col2:
+            selected_fin = st.selectbox(
+                "Select Financial Metric",
+                [c for c in numeric_cols if c != selected_esg]
+            )
 
+        st.markdown("---")
 
-    with col2:
-    selected_fin = st.selectbox(
-    "Select Financial Metric",
-    [c for c in numeric_cols if c != selected_esg]
-    )
+        fig, ax = plt.subplots()
+        sns.scatterplot(
+            data=df,
+            x=selected_esg,
+            y=selected_fin,
+            ax=ax
+        )
+        ax.set_title(f"{selected_esg} vs {selected_fin}")
+        ax.set_xlabel(selected_esg)
+        ax.set_ylabel(selected_fin)
 
+        st.pyplot(fig)
 
-    st.markdown("---")
-
-
-    fig, ax = plt.subplots()
-    sns.scatterplot(
-    data=df,
-    x=selected_esg,
-    y=selected_fin,
-    ax=ax
-    )
-    ax.set_title(f"{selected_esg} vs {selected_fin}")
-    ax.set_xlabel(selected_esg)
-    ax.set_ylabel(selected_fin)
-    st.pyplot(fig)
 # ---------------- TAB 4: Model Outputs -----------------
 with tab4:
     st.subheader("Random Forest Regression (Same as Notebook)")
